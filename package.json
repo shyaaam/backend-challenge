@@ -1,0 +1,25 @@
+{
+  "name": "gapless",
+  "version": "1.0.0",
+  "description": "Gapless backend coding task",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gapless",
+    "task",
+    "api"
+  ],
+  "author": "Shyam",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^18.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3",
+    "standard": "^14.3.3"
+  }
+}
