@@ -4,8 +4,8 @@
   "description": "Gapless backend coding task",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,10 +16,28 @@
   "author": "Shyam",
   "license": "ISC",
   "dependencies": {
-    "@hapi/hapi": "^18.4.0"
+    "@hapi/hapi": "^18.4.0",
+    "hapi-auth-jwt": "^4.0.0",
+    "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
+    "@types/node": "^13.13.4",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
     "nodemon": "^2.0.3",
-    "standard": "^14.3.3"
+    "standard": "^14.3.3",
+    "standardx": "^5.0.0",
+    "ts-node": "^8.9.1",
+    "typescript": "^3.8.3"
+  },
+  "eslintConfig": {
+    "rules": {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "error"
+    }
+  },
+  "standardx": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [ "@typescript-eslint/eslint-plugin" ]
   }
 }
