@@ -17,8 +17,10 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/hapi": "^18.4.0",
-    "hapi-auth-jwt": "^4.0.0",
-    "jsonwebtoken": "^8.5.1"
+    "@hapi/joi": "^17.1.1",
+    "hapi-auth-jwt2": "^10.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^13.13.4",
@@ -38,6 +40,8 @@
   },
   "standardx": {
     "parser": "@typescript-eslint/parser",
-    "plugins": [ "@typescript-eslint/eslint-plugin" ]
+    "plugins": [
+      "@typescript-eslint/eslint-plugin"
+    ]
   }
 }
