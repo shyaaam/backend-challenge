@@ -1,0 +1,86 @@
+
+/*Version:01*/
+
+SELECT x.year AS YEAR, x.cw AS CW,
+(SELECT count(*) FROM users u WHERE YEAR(u.created_at) = x.year AND WEEK(u.created_at) = x.cw) AS USERS,
+(SELECT count(*) FROM vehicles v WHERE YEAR(v.created_at) = x.year AND WEEK(v.created_at) = x.cw) AS VEHICLES,
+(SELECT count(*) FROM events e WHERE YEAR(e.event_date) = x.year AND WEEK(e.created_at) = x.cw) AS EVENTS,
+(SELECT IFNULL(SUM(o.price)/100, 0) AS revenue FROM orders o WHERE YEAR(created_at) = x.year AND WEEK(o.created_at) = x.cw) AS REVENUE
+FROM
+(
+SELECT YEAR(u.created_at) AS year, WEEK(u.created_at) AS cw FROM users u
+UNION
+SELECT YEAR(o.created_at), WEEK(o.created_at) FROM orders o
+UNION
+SELECT YEAR(v.created_at)r, WEEK(v.created_at) FROM vehicles v
+UNION
+SELECT YEAR(e.created_at), WEEK(e.created_at) FROM events e
+) AS x
+GROUP BY x.year, x.cw
+ORDER BY x.year DESC, x.cw DESC;
+
+/*Version:02*/
+
+WITH x as(
+SELECT YEAR(u.created_at) AS year, WEEK(u.created_at) AS cw FROM users u
+UNION
+SELECT YEAR(o.created_at), WEEK(o.created_at) FROM orders o
+UNION
+SELECT YEAR(v.created_at)r, WEEK(v.created_at) FROM vehicles v
+UNION
+SELECT YEAR(e.created_at), WEEK(e.created_at) FROM events e
+)
+SELECT x.year AS YEAR, x.cw AS CW, IFNULL(u.ucount, 0) AS USERS , IFNULL(v.vcount, 0) AS VEHICLES, IFNULL(e.ecount, 0) AS EVENTS, IFNULL(o.revenue, 0)/100 AS REVENUE
+FROM
+x LEFT JOIN
+(
+SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS ucount FROM users GROUP BY YEAR(created_at), WEEK(created_at)
+) AS u on u.year = x.year AND u.cw = x.cw
+LEFT JOIN
+(
+SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS vcount FROM vehicles GROUP BY YEAR(created_at), WEEK(created_at)
+) AS v on v.year = x.year AND v.cw = x.cw
+LEFT JOIN
+(
+SELECT YEAR(event_date) AS year, WEEK(created_at) AS cw, count(*) AS ecount FROM events GROUP BY YEAR(event_date), WEEK(created_at)
+) AS e on e.year = x.year AND e.cw = x.cw
+LEFT JOIN
+(
+SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, SUM(price) AS revenue FROM orders GROUP BY YEAR(created_at), WEEK(created_at)
+)as o on o.year = x.year AND o.cw = x.cw
+GROUP BY x.year, x.cw
+ORDER BY x.year DESC, x.cw DESC;
+
+
+/*Version:03*/
+
+SELECT x.year AS YEAR, x.cw AS CW, IFNULL(u.ucount, 0) AS USERS , IFNULL(v.vcount, 0) AS VEHICLES,
+IFNULL(e.ecount, 0) AS EVENTS, IFNULL(o.revenue, 0)/100 AS REVENUE
+FROM
+(
+SELECT YEAR(u.created_at) AS year, WEEK(u.created_at) AS cw FROM users u
+UNION
+SELECT YEAR(o.created_at), WEEK(o.created_at) FROM orders o
+UNION
+SELECT YEAR(v.created_at)r, WEEK(v.created_at) FROM vehicles v
+UNION
+SELECT YEAR(e.created_at), WEEK(e.created_at) FROM events e
+) AS x LEFT JOIN
+(
+SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS ucount FROM users GROUP BY YEAR(created_at), WEEK(created_at)
+) AS u on u.year = x.year AND u.cw = x.cw
+LEFT JOIN
+(
+SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS vcount FROM vehicles GROUP BY YEAR(created_at), WEEK(created_at)
+) AS v on v.year = x.year AND v.cw = x.cw
+LEFT JOIN
+(
+SELECT YEAR(event_date) AS year, WEEK(created_at) AS cw, count(*) AS ecount FROM events GROUP BY YEAR(event_date), WEEK(created_at)
+) AS e on e.year = x.year AND e.cw = x.cw
+LEFT JOIN
+(
+SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, SUM(price) AS revenue FROM orders GROUP BY YEAR(created_at), WEEK(created_at)
+)as o on o.year = x.year AND o.cw = x.cw
+GROUP BY x.year, x.cw
+ORDER BY x.year DESC, x.cw DESC;
+
