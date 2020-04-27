@@ -8,14 +8,7 @@ const JWT = require('jsonwebtoken')
 
 const secret = 'sHmpTzqXMp8PpYXKwc9ShQ1UhyDe';
 
-const validate = async (decoded: any) => {
-  if (decoded !== secret) {
-    return { isValid: false }
-  } else {
-    return { isValid: true }
-  }
-}
-
+const validate = async (decoded: string) => ({ isValid: decoded === secret })
 const init = async () => {
   const server = Hapi.server({
     port: 3000,
@@ -31,16 +24,19 @@ const init = async () => {
         validate
       })
   server.auth.default('jwt')
+  // Just for demonstration of api security, we will enclose the 'vin' api route with jwt authentication, to simulate real-world environment where the api is exposed only to authenticated users
   server.route({
     method: 'GET',
     config: {
       auth: false
     },
-    path: '/generate',
-    handler: async (request: any) => {
+    path: '/generate-token',
+    handler: async () => {
       return {
         statusCode: 200,
-        data: JWT.sign(secret, secret)
+        data: {
+          token: JWT.sign(secret, secret) // Just for demonstration! Usually the first param should be a random string
+        }
       }
     }
   })
@@ -49,16 +45,12 @@ const init = async () => {
     config: {
       validate: {
         params: Joi.object({
-          vin: Joi.string().min(17).max(17) // casual string length validation for vin, using Joi
-        }),
-        options: {
-          allowUnknown: true
-        }
+          vin: Joi.string().min(17).max(17) // just a basic string length validation for vin, using Joi
+        })
       }
     },
     path: '/vin/{vin}',
     handler: async (request: any, h: any) => {
-      console.log('request', request.params)
       try {
         const data = await fetch('https://static.gapless.app/backend-coding-challenge/vins.json').then((res: any) => res.json())
         return {
