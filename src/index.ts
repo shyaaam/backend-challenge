@@ -3,10 +3,13 @@
 const Hapi = require('@hapi/hapi')
 const jwt = require('hapi-auth-jwt2')
 const fetch = require('node-fetch')
+const Joi = require('@hapi/joi')
+const JWT = require('jsonwebtoken')
+
+const secret = 'sHmpTzqXMp8PpYXKwc9ShQ1UhyDe';
 
 const validate = async (decoded: any) => {
-  console.log('decoded', decoded)
-  if (!decoded.id) {
+  if (decoded !== secret) {
     return { isValid: false }
   } else {
     return { isValid: true }
@@ -21,22 +24,50 @@ const init = async () => {
   await server.register(jwt)
   server.auth.strategy('jwt', 'jwt',
       {
-        key: 'sHmpTzqXMp8PpYXKwc9ShQ1UhyDe',
+        key: secret,
         verifyOptions: {
           algorithms: [ 'HS256' ],
         },
-        validate  // validate function defined above
+        validate
       })
   server.auth.default('jwt')
   server.route({
     method: 'GET',
-    config: { auth: false },
-    path: '/',
+    config: {
+      auth: false
+    },
+    path: '/generate',
     handler: async (request: any) => {
-      const data = await fetch('https://static.gapless.app/backend-coding-challenge/vins.json').then((res: any) => res.json())
       return {
         statusCode: 200,
-        data: data.filter((d:any) => d.vin === request.query.vin)[0] || {}
+        data: JWT.sign(secret, secret)
+      }
+    }
+  })
+  server.route({
+    method: 'GET',
+    config: {
+      validate: {
+        params: Joi.object({
+          vin: Joi.string().min(17).max(17) // casual string length validation for vin, using Joi
+        }),
+        options: {
+          allowUnknown: true
+        }
+      }
+    },
+    path: '/vin/{vin}',
+    handler: async (request: any, h: any) => {
+      console.log('request', request.params)
+      try {
+        const data = await fetch('https://static.gapless.app/backend-coding-challenge/vins.json').then((res: any) => res.json())
+        return {
+          statusCode: 200,
+          data: data.filter((d:any) => d.vin === request.params.vin)[0] || {}
+        }
+      }
+      catch (e) {
+        throw h.internal('Server Error', e)
       }
     }
   })
