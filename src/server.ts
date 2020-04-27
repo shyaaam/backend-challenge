@@ -5,10 +5,15 @@ const jwt = require('hapi-auth-jwt2')
 const routes = require('./routes')
 const { secret, port, host }  = require('./config.js')
 
-module.exports.deployment = async () => {
+module.exports.init = async () => {
     const server = Hapi.server({
+        host,
         port,
-        host
+        routes: {
+            cors: {
+                origin: ["*"]
+            }
+        }
     })
 
     /*

@@ -1,9 +1,9 @@
 const JWT = require('jsonwebtoken')
 const fetch = require('node-fetch')
 const Joi = require('@hapi/joi')
-const { secret } = require('./config.js')
+const { salt, secret } = require('./config.js')
 
-module.exports = [
+const routes = [
     {
         path: '/generate-token', // generate JWT route
         method: 'GET',
@@ -14,7 +14,7 @@ module.exports = [
             return {
                 statusCode: 200,
                 data: {
-                    token: JWT.sign(secret, secret) // Just for demonstration! Usually the first param should be a random string
+                    token: JWT.sign(salt, secret) // Just for demonstration! Usually the first param should be a random string
                 }
             }
         }
@@ -43,3 +43,5 @@ module.exports = [
         }
     }
 ]
+
+module.exports = routes
