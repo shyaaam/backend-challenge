@@ -9,8 +9,9 @@ const JWT = require('jsonwebtoken')
 const secret = 'sHmpTzqXMp8PpYXKwc9ShQ1UhyDe';
 
 const validate = async (decoded: string) => ({ isValid: decoded === secret })
+let server
 const init = async () => {
-  const server = Hapi.server({
+  server = Hapi.server({
     port: 3000,
     host: 'localhost'
   })
@@ -74,3 +75,5 @@ process.on('unhandledRejection', (err) => {
 })
 
 init()
+
+module.exports = server // for testing
