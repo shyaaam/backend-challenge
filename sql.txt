@@ -35,19 +35,19 @@ FROM
 x LEFT JOIN
 (
 SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS ucount FROM users GROUP BY YEAR(created_at), WEEK(created_at)
-) AS u on u.year = x.year AND u.cw = x.cw
+) AS u ON u.year = x.year AND u.cw = x.cw
 LEFT JOIN
 (
 SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS vcount FROM vehicles GROUP BY YEAR(created_at), WEEK(created_at)
-) AS v on v.year = x.year AND v.cw = x.cw
+) AS v ON v.year = x.year AND v.cw = x.cw
 LEFT JOIN
 (
 SELECT YEAR(event_date) AS year, WEEK(created_at) AS cw, count(*) AS ecount FROM events GROUP BY YEAR(event_date), WEEK(created_at)
-) AS e on e.year = x.year AND e.cw = x.cw
+) AS e ON e.year = x.year AND e.cw = x.cw
 LEFT JOIN
 (
 SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, SUM(price) AS revenue FROM orders GROUP BY YEAR(created_at), WEEK(created_at)
-)as o on o.year = x.year AND o.cw = x.cw
+)as o ON o.year = x.year AND o.cw = x.cw
 GROUP BY x.year, x.cw
 ORDER BY x.year DESC, x.cw DESC;
 
@@ -68,19 +68,19 @@ SELECT YEAR(e.created_at), WEEK(e.created_at) FROM events e
 ) AS x LEFT JOIN
 (
 SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS ucount FROM users GROUP BY YEAR(created_at), WEEK(created_at)
-) AS u on u.year = x.year AND u.cw = x.cw
+) AS u ON u.year = x.year AND u.cw = x.cw
 LEFT JOIN
 (
 SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, count(*) AS vcount FROM vehicles GROUP BY YEAR(created_at), WEEK(created_at)
-) AS v on v.year = x.year AND v.cw = x.cw
+) AS v ON v.year = x.year AND v.cw = x.cw
 LEFT JOIN
 (
 SELECT YEAR(event_date) AS year, WEEK(created_at) AS cw, count(*) AS ecount FROM events GROUP BY YEAR(event_date), WEEK(created_at)
-) AS e on e.year = x.year AND e.cw = x.cw
+) AS e ON e.year = x.year AND e.cw = x.cw
 LEFT JOIN
 (
 SELECT YEAR(created_at) AS year, WEEK(created_at) AS cw, SUM(price) AS revenue FROM orders GROUP BY YEAR(created_at), WEEK(created_at)
-)as o on o.year = x.year AND o.cw = x.cw
+)as o ON o.year = x.year AND o.cw = x.cw
 GROUP BY x.year, x.cw
 ORDER BY x.year DESC, x.cw DESC;
 

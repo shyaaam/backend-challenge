@@ -11,7 +11,7 @@ module.exports.init = async () => {
         port,
         routes: {
             cors: {
-                origin: ["*"]
+                origin: ["*"] // Do not do in the real-world!
             }
         }
     })
